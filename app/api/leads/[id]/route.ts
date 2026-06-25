@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { status, notes } = await req.json();
-  const rows = await sql`
-    UPDATE leads SET
-      status = COALESCE(${status ?? null}, status),
-      notes  = COALESCE(${notes  ?? null}, notes)
-    WHERE id = ${params.id}
-    RETURNING *
-  `;
-  return NextResponse.json(rows[0]);
+  const body = await req.json();
+  const update: Record<string, string> = {};
+  if (body.status) update.status = body.status;
+  if (body.notes !== undefined) update.notes = body.notes;
+
+  const { data, error } = await supabase.from("leads").update(update).eq("id", params.id).select().single();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }

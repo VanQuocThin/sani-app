@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
-  const rows = await sql`SELECT * FROM leads ORDER BY created_at DESC`;
-  return NextResponse.json(rows);
+  const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }
 
 export async function POST(req: NextRequest) {
@@ -11,10 +12,10 @@ export async function POST(req: NextRequest) {
   const { name, phone, email, clinic, specialty, city, message, source } = body;
   if (!name) return NextResponse.json({ error: "Thiếu tên" }, { status: 400 });
 
-  const rows = await sql`
-    INSERT INTO leads (name, phone, email, clinic, specialty, city, message, source)
-    VALUES (${name}, ${phone ?? null}, ${email ?? null}, ${clinic ?? null}, ${specialty ?? null}, ${city ?? null}, ${message ?? null}, ${source ?? "register"})
-    RETURNING *
-  `;
-  return NextResponse.json(rows[0], { status: 201 });
+  const { data, error } = await supabase.from("leads").insert([
+    { name, phone, email, clinic, specialty, city, message, source: source ?? "register" }
+  ]).select().single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data, { status: 201 });
 }
