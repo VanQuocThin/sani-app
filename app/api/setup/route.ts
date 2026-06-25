@@ -81,9 +81,14 @@ export async function GET() {
         city TEXT,
         message TEXT,
         source TEXT DEFAULT 'register',
+        status TEXT DEFAULT 'new',
+        notes TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
+
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'new'`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS notes TEXT`;
 
     // Tạo clinic mặc định nếu chưa có
     await sql`
