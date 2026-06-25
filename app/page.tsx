@@ -5,6 +5,17 @@ import Link from "next/link";
 
 export default function LandingPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", phone: "", email: "", clinic: "", specialty: "", city: "", message: "" });
+
+  async function handleContact(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...contactForm, source: "contact" }),
+    }).catch(() => {});
+    setFormSubmitted(true);
+  }
 
   return (
     <>
@@ -175,35 +186,21 @@ export default function LandingPage() {
             </div>
             <p className="hero-note">✓ Không cần thẻ tín dụng &nbsp;·&nbsp; ✓ Cài đặt trong 15 phút &nbsp;·&nbsp; ✓ Hỗ trợ tiếng Việt 24/7</p>
           </div>
-          <div className="hero-img">
-            <div className="app-ui">
-              <div className="app-topbar">
-                <div className="dot" style={{ background: "#ff5f57" }} /><div className="dot" style={{ background: "#febc2e" }} /><div className="dot" style={{ background: "#28c840" }} />
-                <span style={{ color: "#94a3b8", fontSize: "0.72rem", marginLeft: "0.5rem" }}>Sani — Lịch hẹn hôm nay</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            {[
+              { icon: "📅", title: "Đặt lịch qua Zalo", desc: "Bệnh nhân đặt lịch qua Zalo OA, nhắc lịch tự động, không cần gọi điện" },
+              { icon: "📋", title: "Hồ sơ bệnh nhân số", desc: "Hồ sơ chuẩn Bộ Y tế, SOAP note, lịch sử khám toàn bộ trong một màn hình" },
+              { icon: "💳", title: "Thu tiền MoMo/VNPay", desc: "QR code tại quầy, thanh toán online, hỗ trợ MoMo, VNPay, ZaloPay, tiền mặt" },
+              { icon: "🧾", title: "Hóa đơn điện tử", desc: "Tự động xuất hóa đơn ký số theo NĐ 123/2020, kết nối MISA, VNPT-Invoice" },
+              { icon: "🏥", title: "Tích hợp BHYT", desc: "Tra cứu thẻ BHYT real-time, tính đồng chi trả tự động, in đúng mẫu BHXH" },
+              { icon: "📊", title: "Báo cáo & Phân tích", desc: "Doanh thu theo ngày/tháng, phân tích bệnh nhân, tỷ lệ tái khám, xuất Excel" },
+            ].map(f => (
+              <div key={f.title} style={{ background: "white", borderRadius: 12, padding: "1.25rem", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+                <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{f.icon}</div>
+                <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#0f2235", marginBottom: "0.35rem" }}>{f.title}</div>
+                <div style={{ fontSize: "0.78rem", color: "#64748b", lineHeight: 1.5 }}>{f.desc}</div>
               </div>
-              <div className="app-body">
-                <div className="app-sidebar">
-                  {["📅 Lịch hẹn", "👥 Bệnh nhân", "📋 Hồ sơ", "💰 Thanh toán", "📊 Báo cáo"].map((item, i) => (
-                    <div key={item} className={`app-sidebar-item${i === 0 ? " active" : ""}`}>{item}</div>
-                  ))}
-                </div>
-                <div className="app-main">
-                  <div className="app-main-title">Thứ Tư, 25 tháng 6 · 8 lịch hẹn</div>
-                  {[
-                    { color: "#00b96b", name: "Nguyễn Thị Hoa", time: "08:00 · Khám tổng quát", tagBg: "#dcfce7", tagColor: "#166534", tag: "Đã xác nhận" },
-                    { color: "#3b82f6", name: "Trần Văn Minh",  time: "09:30 · Tái khám",       tagBg: "#dbeafe", tagColor: "#1e40af", tag: "Zalo OA" },
-                    { color: "#f59e0b", name: "Lê Thị Mai",     time: "10:00 · Khách hàng mới", tagBg: "#fef9c3", tagColor: "#854d0e", tag: "Chờ xác nhận" },
-                    { color: "#8b5cf6", name: "Phạm Quốc Bảo", time: "11:00 · Siêu âm",         tagBg: "#ede9fe", tagColor: "#5b21b6", tag: "BHYT" },
-                  ].map((a) => (
-                    <div key={a.name} className="appt-item">
-                      <div className="appt-dot" style={{ background: a.color }} />
-                      <div><div className="appt-name">{a.name}</div><div className="appt-time">{a.time}</div></div>
-                      <span className="appt-tag" style={{ background: a.tagBg, color: a.tagColor }}>{a.tag}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -351,42 +348,32 @@ export default function LandingPage() {
             {formSubmitted ? (
               <div className="form-success">✅ Cảm ơn bạn đã đăng ký! Đội ngũ Sani sẽ liên hệ trong vòng 2 giờ làm việc.</div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setFormSubmitted(true); }}>
+              <form onSubmit={handleContact}>
                 <div className="form-row">
-                  <div className="form-group"><label>Họ và tên<span>*</span></label><input type="text" placeholder="BS. Nguyễn Văn A" required /></div>
-                  <div className="form-group"><label>Số điện thoại<span>*</span></label><input type="tel" placeholder="0912 345 678" required /></div>
+                  <div className="form-group"><label>Họ và tên<span>*</span></label><input type="text" value={contactForm.name} onChange={e => setContactForm({...contactForm, name: e.target.value})} placeholder="BS. Nguyễn Văn A" required /></div>
+                  <div className="form-group"><label>Số điện thoại<span>*</span></label><input type="tel" value={contactForm.phone} onChange={e => setContactForm({...contactForm, phone: e.target.value})} placeholder="0912 345 678" required /></div>
                 </div>
                 <div className="form-row">
-                  <div className="form-group"><label>Email</label><input type="email" placeholder="bacle@phongkham.vn" /></div>
-                  <div className="form-group"><label>Tên phòng khám<span>*</span></label><input type="text" placeholder="Phòng khám Đa khoa ABC" required /></div>
+                  <div className="form-group"><label>Email</label><input type="email" value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} placeholder="bacle@phongkham.vn" /></div>
+                  <div className="form-group"><label>Tên phòng khám<span>*</span></label><input type="text" value={contactForm.clinic} onChange={e => setContactForm({...contactForm, clinic: e.target.value})} placeholder="Phòng khám Đa khoa ABC" required /></div>
                 </div>
                 <div className="form-row">
                   <div className="form-group"><label>Chuyên khoa<span>*</span></label>
-                    <select required><option value="" disabled>Chọn chuyên khoa</option>
+                    <select value={contactForm.specialty} onChange={e => setContactForm({...contactForm, specialty: e.target.value})} required>
+                      <option value="" disabled>Chọn chuyên khoa</option>
                       {["Đa khoa","Nội tổng quát","Nhi khoa","Da liễu","Răng hàm mặt","Mắt","Tai mũi họng","Sản phụ khoa","Chỉnh hình","Tâm lý","Khác"].map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="form-group"><label>Tỉnh / Thành phố<span>*</span></label>
-                    <select required><option value="" disabled>Chọn tỉnh thành</option>
+                    <select value={contactForm.city} onChange={e => setContactForm({...contactForm, city: e.target.value})} required>
+                      <option value="" disabled>Chọn tỉnh thành</option>
                       {["TP. Hồ Chí Minh","Hà Nội","Đà Nẵng","Cần Thơ","Hải Phòng","Bình Dương","Đồng Nai","Khánh Hòa","Thừa Thiên Huế","Tỉnh / thành khác"].map((c) => <option key={c}>{c}</option>)}
                     </select>
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="form-group"><label>Số bác sĩ hiện tại</label>
-                    <select><option value="" disabled>Chọn quy mô</option>
-                      {["1 bác sĩ","2–3 bác sĩ","4–5 bác sĩ","Trên 5 bác sĩ"].map((o) => <option key={o}>{o}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group"><label>Đang dùng phần mềm nào?</label>
-                    <select><option value="" disabled>Chọn tình trạng</option>
-                      {["Chưa dùng phần mềm nào","Đang dùng Excel / Sổ tay","Đang dùng phần mềm khác"].map((o) => <option key={o}>{o}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row">
                   <div className="form-group full"><label>Bạn quan tâm tính năng nào nhất?</label>
-                    <textarea placeholder="Ví dụ: tôi muốn tích hợp Zalo OA và thanh toán MoMo..." />
+                    <textarea value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})} placeholder="Ví dụ: tôi muốn tích hợp Zalo OA và thanh toán MoMo..." />
                   </div>
                 </div>
                 <div className="form-submit">

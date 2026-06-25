@@ -9,9 +9,14 @@ export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({ name: "", phone: "", email: "", clinic: "", specialty: "", city: "", password: "" });
 
-  function handleRegister(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     saveUser({ name: form.name, clinic: form.clinic, specialty: form.specialty, email: form.email });
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: form.name, phone: form.phone, email: form.email, clinic: form.clinic, specialty: form.specialty, city: form.city, source: "register" }),
+    }).catch(() => {});
     router.push("/dashboard");
   }
 

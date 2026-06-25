@@ -70,6 +70,21 @@ export async function GET() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS leads (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        phone TEXT,
+        email TEXT,
+        clinic TEXT,
+        specialty TEXT,
+        city TEXT,
+        message TEXT,
+        source TEXT DEFAULT 'register',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `;
+
     // Tạo clinic mặc định nếu chưa có
     await sql`
       INSERT INTO clinics (id, name, specialty, city, phone)

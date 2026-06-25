@@ -27,18 +27,31 @@ export default function AppointmentsPage() {
     setLoading(false);
   }
 
+  const [saveError, setSaveError] = useState("");
+
   async function saveAppointment() {
     if (!form.date || !form.time || !form.patient_name) return;
     setSaving(true);
-    await fetch("/api/appointments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, scheduled_at: `${form.date}T${form.time}:00` }),
-    });
+    setSaveError("");
+    try {
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, scheduled_at: `${form.date}T${form.time}:00` }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setSaveError(err.error ?? `Lỗi ${res.status} — thử chạy /api/setup trước`);
+        setSaving(false);
+        return;
+      }
+      setShowModal(false);
+      setForm({ date: "", time: "", patient_name: "", patient_phone: "", type: "Khám tổng quát", notes: "" });
+      fetchAppointments();
+    } catch {
+      setSaveError("Không kết nối được server — kiểm tra DATABASE_URL");
+    }
     setSaving(false);
-    setShowModal(false);
-    setForm({ date: "", time: "", patient_name: "", patient_phone: "", type: "Khám tổng quát", notes: "" });
-    fetchAppointments();
   }
 
   async function updateStatus(id: string, status: string) {
@@ -135,6 +148,7 @@ export default function AppointmentsPage() {
                 <textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Triệu chứng, ghi chú thêm..." className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-[#00b96b] resize-none" /></div>
             </div>
             <div className="flex gap-3 px-6 pb-6">
+              {saveError && <p className="text-xs text-red-500 font-medium col-span-2 mb-1">{saveError}</p>}
               <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Hủy</button>
               <button onClick={saveAppointment} disabled={saving || !form.date || !form.time || !form.patient_name}
                 className="flex-1 px-4 py-2.5 rounded-lg bg-[#00b96b] hover:bg-[#009958] disabled:opacity-50 text-white text-sm font-semibold">
