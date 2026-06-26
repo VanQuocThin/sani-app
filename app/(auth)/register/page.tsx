@@ -63,7 +63,7 @@ export default function RegisterPage() {
                 <select {...f("specialty")} required
                   className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-[#00b96b] bg-slate-50 focus:bg-white transition-all">
                   <option value="">Chọn chuyên khoa</option>
-                  {["Đa khoa","Nội tổng quát","Nhi khoa","Da liễu","Răng hàm mặt","Mắt","Tai mũi họng","Sản phụ khoa"].map((s) => <option key={s}>{s}</option>)}
+                  {["Đa khoa","Nội tổng quát","Nội tim mạch","Nội tiêu hóa","Nội thần kinh","Nội hô hấp","Nội tiết - Đái tháo đường","Nội thận - Tiết niệu","Nội khớp - Cơ xương","Nhi khoa","Nhi sơ sinh","Sản phụ khoa","Hiếm muộn - IVF","Da liễu","Thẩm mỹ da","Răng hàm mặt","Chỉnh nha","Implant","Mắt","Khúc xạ","Tai mũi họng","Phẫu thuật tổng quát","Phẫu thuật thẩm mỹ","Chấn thương chỉnh hình","Cột sống","Ung bướu","Huyết học","Tim mạch can thiệp","Lồng ngực - Mạch máu","Tiết niệu","Nam khoa","Thần kinh - Tâm lý","Tâm thần","Phục hồi chức năng","Y học cổ truyền","Châm cứu","Dinh dưỡng","Siêu âm - Chẩn đoán hình ảnh","Xét nghiệm","Vật lý trị liệu","Tiêm chủng","Sức khỏe tổng quát","Khác"].map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
               <div>
@@ -71,7 +71,7 @@ export default function RegisterPage() {
                 <select {...f("city")} required
                   className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-[#00b96b] bg-slate-50 focus:bg-white transition-all">
                   <option value="">Chọn tỉnh thành</option>
-                  {["TP. Hồ Chí Minh","Hà Nội","Đà Nẵng","Cần Thơ","Hải Phòng","Bình Dương"].map((c) => <option key={c}>{c}</option>)}
+                  {["TP. Hồ Chí Minh","Hà Nội","Đà Nẵng","Hải Phòng","Cần Thơ","An Giang","Bà Rịa - Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cao Bằng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Tĩnh","Hải Dương","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"].map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
             </div>
